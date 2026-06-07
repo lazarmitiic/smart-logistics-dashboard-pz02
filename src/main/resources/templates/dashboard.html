@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Logistics Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Smart Logistics Dashboard</h1>
+            <nav>
+                <a th:href="@{/}" id="nav-dashboard">Dashboard</a>
+                <a th:href="@{/shipments}" id="nav-shipments">Shipments</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="stats-grid">
+                <div class="stat-card" id="card-total-shipments">
+                    <div class="stat-title">Total Shipments</div>
+                    <div class="stat-value" th:text="${stats.totalShipments}">0</div>
+                </div>
+                <div class="stat-card" id="card-active-vehicles">
+                    <div class="stat-title">Active Vehicles</div>
+                    <div class="stat-value" th:text="${stats.activeVehicles}">0</div>
+                </div>
+                <div class="stat-card" id="card-active-drivers">
+                    <div class="stat-title">Active Drivers</div>
+                    <div class="stat-value" th:text="${stats.activeDrivers}">0</div>
+                </div>
+                <div class="stat-card" id="card-pending-tasks">
+                    <div class="stat-title">Pending Shipments</div>
+                    <div class="stat-value" th:text="${stats.pendingTasks}">0</div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <a th:href="@{/shipments}" class="btn btn-primary" id="btn-view-shipments">Manage Shipments</a>
+                <a th:href="@{/shipments/new}" class="btn btn-secondary" id="btn-create-shipment">New Shipment</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

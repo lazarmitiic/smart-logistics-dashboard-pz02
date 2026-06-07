@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipment Management - Smart Logistics</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Shipment Management</h1>
+            <nav>
+                <a th:href="@{/}" id="nav-dashboard">Dashboard</a>
+                <a th:href="@{/shipments}" id="nav-shipments">Shipments</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="actions-bar">
+                <form th:action="@{/shipments}" method="get" class="filter-form" id="shipment-filter-form">
+                    <select name="status" class="form-select" id="filter-status">
+                        <option value="">All Statuses</option>
+                        <option value="Pending" th:selected="${status == 'Pending'}">Pending</option>
+                        <option value="In Transit" th:selected="${status == 'In Transit'}">In Transit</option>
+                        <option value="Delivered" th:selected="${status == 'Delivered'}">Delivered</option>
+                    </select>
+
+                    <select name="priority" class="form-select" id="filter-priority">
+                        <option value="">All Priorities</option>
+                        <option value="Critical" th:selected="${priority == 'Critical'}">Critical</option>
+                        <option value="High" th:selected="${priority == 'High'}">High</option>
+                        <option value="Medium" th:selected="${priority == 'Medium'}">Medium</option>
+                        <option value="Low" th:selected="${priority == 'Low'}">Low</option>
+                    </select>
+
+                    <button type="submit" class="btn btn-secondary" id="btn-filter">Filter</button>
+                    <a th:href="@{/shipments}" class="btn btn-secondary" id="btn-reset">Reset</a>
+                </form>
+
+                <a th:href="@{/shipments/new}" class="btn btn-primary" id="btn-add-shipment">Add New Shipment</a>
+            </div>
+
+            <div class="table-container">
+                <table id="shipments-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tracking Code</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Weight (kg)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="s : ${shipments}">
+                            <td th:text="${s.id}">1</td>
+                            <td th:text="${s.trackingCode}">SH-001</td>
+                            <td th:text="${s.description}">Description</td>
+                            <td>
+                                <span th:class="'badge badge-' + ${#strings.toLowerCase(#strings.replace(s.status, ' ', ''))}" th:text="${s.status}">Pending</span>
+                            </td>
+                            <td>
+                                <span th:class="'badge badge-' + ${#strings.toLowerCase(s.priority)}" th:text="${s.priority}">High</span>
+                            </td>
+                            <td th:text="${s.weight}">10.0</td>
+                            <td class="table-actions">
+                                <a th:href="@{/shipments/edit/{id}(id=${s.id})}" class="btn btn-secondary" th:id="'btn-edit-' + ${s.id}">Edit</a>
+                                <a th:href="@{/shipments/delete/{id}(id=${s.id})}" class="btn btn-danger" th:id="'btn-delete-' + ${s.id}">Delete</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(shipments)}">
+                            <td colspan="7" style="text-align: center; color: var(--text-secondary);">No shipments found matching the criteria.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
