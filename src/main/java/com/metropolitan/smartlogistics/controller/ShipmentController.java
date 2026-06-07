@@ -2,12 +2,13 @@ package com.metropolitan.smartlogistics.controller;
 
 import com.metropolitan.smartlogistics.model.Shipment;
 import com.metropolitan.smartlogistics.service.LogisticsService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/shipments")
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/shipments")
 public class ShipmentController {
 
     private final LogisticsService logisticsService;
@@ -17,48 +18,48 @@ public class ShipmentController {
     }
 
     @GetMapping
-    public String listShipments(@RequestParam(value = "status", required = false) String status,
-                                @RequestParam(value = "priority", required = false) String priority,
-                                Model model) {
+    public ResponseEntity<List<Shipment>> getAllShipments(
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "priority", required = false) String priority) {
         if ((status != null && !status.isEmpty()) || (priority != null && !priority.isEmpty())) {
-            model.addAttribute("shipments", logisticsService.filterShipments(status, priority));
-        } else {
-            model.addAttribute("shipments", logisticsService.getAllShipments());
+            return ResponseEntity.ok(logisticsService.filterShipments(status, priority));
         }
-        model.addAttribute("status", status);
-        model.addAttribute("priority", priority);
-        return "shipments";
+        return ResponseEntity.ok(logisticsService.getAllShipments());
     }
 
-    @GetMapping("/new")
-    public String showCreateForm(Model model) {
-        model.addAttribute("shipment", new Shipment());
-        return "shipment-form";
-    }
-
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable("id") Long id, Model model) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getShipmentById(@PathVariable("id") Long id) {
         Shipment shipment = logisticsService.getShipmentById(id);
         if (shipment == null) {
-            return "redirect:/shipments";
+            return ResponseEntity.notFound().build();
         }
-        model.addAttribute("shipment", shipment);
-        return "shipment-form";
+        return ResponseEntity.ok(shipment);
     }
 
     @PostMapping
-    public String saveShipment(@ModelAttribute("shipment") Shipment shipment) {
-        if (shipment.getId() == null) {
-            logisticsService.addShipment(shipment);
-        } else {
-            logisticsService.updateShipment(shipment);
-        }
-        return "redirect:/shipments";
+    public ResponseEntity<?> addShipment(@RequestBody Shipment shipment) {
+        logisticsService.addShipment(shipment);
+        return ResponseEntity.ok(shipment);
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteShipment(@PathVariable("id") Long id) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateShipment(@PathVariable("id") Long id, @RequestBody Shipment shipment) {
+        Shipment existing = logisticsService.getShipmentById(id);
+        if (existing == null) {
+            return ResponseEntity.notFound().build();
+        }
+        shipment.setId(id);
+        logisticsService.updateShipment(shipment);
+        return ResponseEntity.ok(shipment);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteShipment(@PathVariable("id") Long id) {
+        Shipment existing = logisticsService.getShipmentById(id);
+        if (existing == null) {
+            return ResponseEntity.notFound().build();
+        }
         logisticsService.deleteShipment(id);
-        return "redirect:/shipments";
+        return ResponseEntity.ok().build();
     }
 }
