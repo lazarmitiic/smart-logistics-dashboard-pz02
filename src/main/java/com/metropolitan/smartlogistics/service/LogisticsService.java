@@ -1,179 +1,139 @@
 package com.metropolitan.smartlogistics.service;
 
 import com.metropolitan.smartlogistics.model.*;
+import com.metropolitan.smartlogistics.repository.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class LogisticsService {
 
-    private final List<Shipment> shipments = new ArrayList<>();
-    private final List<Vehicle> vehicles = new ArrayList<>();
-    private final List<Driver> drivers = new ArrayList<>();
-    private final List<Warehouse> warehouses = new ArrayList<>();
+    private final ShipmentRepository shipmentRepository;
+    private final VehicleRepository vehicleRepository;
+    private final DriverRepository driverRepository;
+    private final WarehouseRepository warehouseRepository;
 
-    public LogisticsService() {
-        shipments.add(new Shipment(1L, "SH-001", "Electronics delivery", "In Transit", "High", 120.5));
-        shipments.add(new Shipment(2L, "SH-002", "Office supplies", "Delivered", "Medium", 45.0));
-        shipments.add(new Shipment(3L, "SH-003", "Medical equipment", "Pending", "Critical", 85.2));
-        shipments.add(new Shipment(4L, "SH-004", "Automotive parts", "In Transit", "Low", 340.0));
-
-        vehicles.add(new Vehicle(1L, "BG-123-AA", "Mercedes-Benz Sprinter", 1500.0));
-        vehicles.add(new Vehicle(2L, "BG-456-BB", "Volvo FH16", 20000.0));
-        vehicles.add(new Vehicle(3L, "BG-789-CC", "Scania R500", 18000.0));
-
-        drivers.add(new Driver(1L, "John Doe", "C", "Active"));
-        drivers.add(new Driver(2L, "Jane Smith", "E", "Active"));
-        drivers.add(new Driver(3L, "Bob Johnson", "B", "Inactive"));
-
-        warehouses.add(new Warehouse(1L, "Central Hub", "Belgrade", 50000.0));
-        warehouses.add(new Warehouse(2L, "North Warehouse", "Novi Sad", 25000.0));
-        warehouses.add(new Warehouse(3L, "South Depot", "Nis", 15000.0));
+    public LogisticsService(ShipmentRepository shipmentRepository,
+                            VehicleRepository vehicleRepository,
+                            DriverRepository driverRepository,
+                            WarehouseRepository warehouseRepository) {
+        this.shipmentRepository = shipmentRepository;
+        this.vehicleRepository = vehicleRepository;
+        this.driverRepository = driverRepository;
+        this.warehouseRepository = warehouseRepository;
     }
 
     public List<Shipment> getAllShipments() {
-        return new ArrayList<>(shipments);
+        return shipmentRepository.findAll();
     }
 
     public Shipment getShipmentById(Long id) {
-        return shipments.stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return shipmentRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public void addShipment(Shipment shipment) {
-        if (shipment.getId() == null) {
-            long nextId = shipments.stream().mapToLong(Shipment::getId).max().orElse(0L) + 1;
-            shipment.setId(nextId);
-        }
-        shipments.add(shipment);
+        shipmentRepository.save(shipment);
     }
 
+    @Transactional
     public void updateShipment(Shipment shipment) {
-        for (int i = 0; i < shipments.size(); i++) {
-            if (shipments.get(i).getId().equals(shipment.getId())) {
-                shipments.set(i, shipment);
-                return;
-            }
-        }
+        shipmentRepository.save(shipment);
     }
 
+    @Transactional
     public void deleteShipment(Long id) {
-        shipments.removeIf(s -> s.getId().equals(id));
+        shipmentRepository.deleteById(id);
     }
 
     public List<Shipment> filterShipments(String status, String priority) {
-        return shipments.stream()
+        return shipmentRepository.findAll().stream()
                 .filter(s -> (status == null || status.isEmpty() || s.getStatus().equalsIgnoreCase(status)))
                 .filter(s -> (priority == null || priority.isEmpty() || s.getPriority().equalsIgnoreCase(priority)))
                 .collect(Collectors.toList());
     }
 
     public List<Vehicle> getAllVehicles() {
-        return new ArrayList<>(vehicles);
+        return vehicleRepository.findAll();
     }
 
     public Vehicle getVehicleById(Long id) {
-        return vehicles.stream()
-                .filter(v -> v.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return vehicleRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public void addVehicle(Vehicle vehicle) {
-        if (vehicle.getId() == null) {
-            long nextId = vehicles.stream().mapToLong(Vehicle::getId).max().orElse(0L) + 1;
-            vehicle.setId(nextId);
-        }
-        vehicles.add(vehicle);
+        vehicleRepository.save(vehicle);
     }
 
+    @Transactional
     public void updateVehicle(Vehicle vehicle) {
-        for (int i = 0; i < vehicles.size(); i++) {
-            if (vehicles.get(i).getId().equals(vehicle.getId())) {
-                vehicles.set(i, vehicle);
-                return;
-            }
-        }
+        vehicleRepository.save(vehicle);
     }
 
+    @Transactional
     public void deleteVehicle(Long id) {
-        vehicles.removeIf(v -> v.getId().equals(id));
+        vehicleRepository.deleteById(id);
     }
 
     public List<Driver> getAllDrivers() {
-        return new ArrayList<>(drivers);
+        return driverRepository.findAll();
     }
 
     public Driver getDriverById(Long id) {
-        return drivers.stream()
-                .filter(d -> d.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return driverRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public void addDriver(Driver driver) {
-        if (driver.getId() == null) {
-            long nextId = drivers.stream().mapToLong(Driver::getId).max().orElse(0L) + 1;
-            driver.setId(nextId);
-        }
-        drivers.add(driver);
+        driverRepository.save(driver);
     }
 
+    @Transactional
     public void updateDriver(Driver driver) {
-        for (int i = 0; i < drivers.size(); i++) {
-            if (drivers.get(i).getId().equals(driver.getId())) {
-                drivers.set(i, driver);
-                return;
-            }
-        }
+        driverRepository.save(driver);
     }
 
+    @Transactional
     public void deleteDriver(Long id) {
-        drivers.removeIf(d -> d.getId().equals(id));
+        driverRepository.deleteById(id);
     }
 
     public List<Warehouse> getAllWarehouses() {
-        return new ArrayList<>(warehouses);
+        return warehouseRepository.findAll();
     }
 
     public Warehouse getWarehouseById(Long id) {
-        return warehouses.stream()
-                .filter(w -> w.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return warehouseRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public void addWarehouse(Warehouse warehouse) {
-        if (warehouse.getId() == null) {
-            long nextId = warehouses.stream().mapToLong(Warehouse::getId).max().orElse(0L) + 1;
-            warehouse.setId(nextId);
-        }
-        warehouses.add(warehouse);
+        warehouseRepository.save(warehouse);
     }
 
+    @Transactional
     public void updateWarehouse(Warehouse warehouse) {
-        for (int i = 0; i < warehouses.size(); i++) {
-            if (warehouses.get(i).getId().equals(warehouse.getId())) {
-                warehouses.set(i, warehouse);
-                return;
-            }
-        }
+        warehouseRepository.save(warehouse);
     }
 
+    @Transactional
     public void deleteWarehouse(Long id) {
-        warehouses.removeIf(w -> w.getId().equals(id));
+        warehouseRepository.deleteById(id);
     }
 
     public DashboardStats getDashboardStats() {
-        int totalShipments = shipments.size();
-        int activeVehicles = (int) vehicles.stream().count();
-        int activeDrivers = (int) drivers.stream().filter(d -> d.getStatus().equalsIgnoreCase("Active")).count();
-        int pendingTasks = (int) shipments.stream().filter(s -> s.getStatus().equalsIgnoreCase("Pending")).count();
+        int totalShipments = (int) shipmentRepository.count();
+        int activeVehicles = (int) vehicleRepository.count();
+        int activeDrivers = (int) driverRepository.findAll().stream()
+                .filter(d -> d.getStatus() != null && d.getStatus().equalsIgnoreCase("Active"))
+                .count();
+        int pendingTasks = (int) shipmentRepository.findAll().stream()
+                .filter(s -> s.getStatus() != null && s.getStatus().equalsIgnoreCase("Pending"))
+                .count();
 
         return new DashboardStats(totalShipments, activeVehicles, activeDrivers, pendingTasks);
     }
