@@ -1,6 +1,6 @@
 # Smart Logistics Dashboard
 
-Projekat iz predmeta IT355 - Veb sistemi 2 (Prvi projektni zadatak).
+Projekat iz predmeta IT355 - Veb sistemi 2 (Drugi projektni zadatak).
 
 ## Opis aplikacije
 Smart Logistics Dashboard je veb aplikacija namenjena efikasnom upravljanju logističkim procesima, organizaciji pošiljki, skladišta, vozila i vozača. Omogućava centralizovano praćenje statusa pošiljki i osnovne statističke podatke unutar dashboard interfejsa.
